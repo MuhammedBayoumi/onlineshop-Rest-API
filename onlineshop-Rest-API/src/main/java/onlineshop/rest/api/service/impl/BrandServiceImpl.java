@@ -1,7 +1,9 @@
 package onlineshop.rest.api.service.impl;
 
 import onlineshop.rest.api.Repository.BrandRepository;
+import onlineshop.rest.api.exception.BadRequestException;
 import onlineshop.rest.api.exception.BlogapiException;
+import onlineshop.rest.api.exception.ResponseEntityErrorException;
 import onlineshop.rest.api.model.Brand;
 import onlineshop.rest.api.model.Product;
 import onlineshop.rest.api.payloads.response.ApiResponse;
@@ -9,8 +11,10 @@ import onlineshop.rest.api.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +30,10 @@ class BrandServiceImpl implements BrandService {
     private EntityManager entityManager;
     @Autowired
     BrandRepository brandRepository;
+    @ExceptionHandler(ResponseEntityErrorException.class)
+    public ResponseEntity<ApiResponse> handleExceptions(ResponseEntityErrorException exception) {
+        return exception.getApiResponse();
+    }
     private static final String YOU_DON_T_HAVE_PERMISSION_TO_MAKE_THIS_OPERATION = "You don't have permission to make this operation";
     private static final String NO_DATA_FOUND_TO_UPDATE = "NO DATA FOUND TO UPDATE";
     private static final String BRAND_ALREADY_EXISTS = "Brand with this code already exists";
@@ -65,11 +73,8 @@ class BrandServiceImpl implements BrandService {
             return newBrand;
         } else {
             // Brand already exists
-            ApiResponse apiResponse = new ApiResponse();
-            apiResponse.setMessage(BRAND_ALREADY_EXISTS);
-            apiResponse.setSuccess(Boolean.FALSE);
-            apiResponse.setStatus(HttpStatus.CONFLICT);
-            throw new BlogapiException(HttpStatus.CONFLICT, apiResponse.toString());
+            ApiResponse apiResponse = new ApiResponse(Boolean.FALSE,BRAND_ALREADY_EXISTS,HttpStatus.CONFLICT);
+            throw new BadRequestException(apiResponse);
         }
     }
 
