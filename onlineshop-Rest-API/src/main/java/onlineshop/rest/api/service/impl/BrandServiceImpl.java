@@ -30,10 +30,7 @@ class BrandServiceImpl implements BrandService {
     private EntityManager entityManager;
     @Autowired
     BrandRepository brandRepository;
-    @ExceptionHandler(ResponseEntityErrorException.class)
-    public ResponseEntity<ApiResponse> handleExceptions(ResponseEntityErrorException exception) {
-        return exception.getApiResponse();
-    }
+
     private static final String YOU_DON_T_HAVE_PERMISSION_TO_MAKE_THIS_OPERATION = "You don't have permission to make this operation";
     private static final String NO_DATA_FOUND_TO_UPDATE = "NO DATA FOUND TO UPDATE";
     private static final String BRAND_ALREADY_EXISTS = "Brand with this code already exists";

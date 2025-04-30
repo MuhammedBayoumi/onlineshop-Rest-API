@@ -26,7 +26,7 @@ public class Brand {
     @Column(name = "BRAND_TITLE", nullable = false, length = 4000)
     private String brandTitle;
 
-    @Size(max = 4000)
+    @Size(max = 10, message = "brandCode- size must be between 0 and 40")
     @NotNull
     @Column(name = "BRAND_CODE", nullable = false, length = 50)
     private String brandCode;
